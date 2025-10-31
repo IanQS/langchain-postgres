@@ -1,0 +1,204 @@
+#########################################
+# LANGUAGE: common
+######################################### 
+
+[language-server.codebook]
+command = "codebook-lsp"
+args = ["serve"]
+
+# introduce new language server
+[language-server.scls]
+command = "simple-completion-language-server"
+
+[language-server.scls.config]
+max_completion_items = 100           # set max completion results len for each group: words, snippets, unicode-input
+feature_words = true                 # enable completion by word
+feature_snippets = true              # enable snippets
+snippets_first = true                # completions will return before snippets by default
+snippets_inline_by_word_tail = false # suggest snippets by WORD tail, for example text `xsq|` become `x^2|` when snippet `sq` has body `^2`
+feature_unicode_input = false        # enable "unicode input"
+feature_paths = false                # enable path completion
+feature_citations = false            # enable citation completion (only on `citation` feature enabled)
+
+
+
+########################################
+# LANGUAGE: PYTHON
+#########################################
+[[language]]
+name = "python"
+language-id = "python"
+auto-format = true
+language-servers = ["pyrefly", "ruff", "scls", "codebook"]
+file-types = ["py", "ipynb"]
+comment-token = "#"
+shebangs = ["python"]
+roots = ["pyproject.toml", "setup.py", "poetry.lock", ".git", ".jj", ".venv/"]
+
+
+########################################
+# 
+########################################
+[language-server.ty]
+command = "ty"
+args = ["server"]
+
+# [language-server.ty.experimental.completions]
+# enable = true
+# ty.experimental.completions.enable": true
+
+########################################
+# https://docs.basedpyright.com/latest/configuration/language-server-settings/
+########################################
+[language-server.basedpyright]
+command = "basedpyright-langserver"
+args = ["--stdio"]
+config.reportMissingtypeStubs = true
+except-features = ["format"]
+reportUnusedImport = false
+
+[language-server.basedpyright.config.basedpyright.analysis]
+autoSearchPaths = true
+diagnosticMode = "workspace"  # "openFilesOnly"
+useLibraryCodeForTypes = true
+autoImportCompletions = true
+typeCheckingMode = "standard"
+# typeCheckingMode = "recommended"
+disableTaggedHints = false
+
+
+# ########################################
+# # https://docs.astral.sh/ruff/settings
+# ########################################
+
+[language-server.ruff]
+command = "ruff"
+args = ["server", "--preview"]
+preview = true
+show-fixes = true
+include = ["*.py"]
+fix = true
+auto-format = true
+
+[language-server.ruff.config.settings]
+lineLength = 120
+logLevel = "debug"
+
+[language-server.ruff.analyze]
+detect-string-imports = true
+
+[language-server.ruff.lint.pydocstyle]
+convention = "google"
+
+[language-server.ruff.config.settings.lint]
+select = ["ALL"]
+ignore = [
+    "C90", # mccabe
+    "CPY", # flake8-copyright
+    "FA", # flake8-future-annotations
+    "PGH", # pygrep-hooks
+    "TD", # flake8-todos
+    "YTT", # flake8-2020
+
+    # disable these rules to use the ruff formatter.
+    "COM812", # missing-trailing-comma
+    "COM819", # prohibited-trailing-comma
+    "D100",   # Missing docstring in public module
+    "D101",   # Missing docstring in public class
+    "D103",   # Missing docstring in public function
+    "D104",   # Missing docstring in public package
+    "D206",   # docstring-tab-indentation
+    "D300",   # triple-single-quotes
+    "D400",   # First line ends with period
+    "D415",   # first line should end with a period, question mark, or exclamation
+    "DOC201",   # Return not documented
+    "DTZ005",
+    "E111",   # indentation-with-invalid-multiple
+    "E114",   # indentation-with-invalid-multiple-comment
+    "E117",   # over-indented
+    "E501",   # line-too-long
+    "FBT003", # Boolean positional val in function arg
+    "Q000",   # bad-quotes-inline-string
+    "Q001",   # bad-quotes-multiline-string
+    "Q002",   # bad-quotes-docstring
+    "Q003",   # avoidable-escaped-quote
+    "S101",   # Asserts
+    "TRY300",  # Consider moving this statement to an else block
+    "SIM108", # X if bla else Y
+    "W191",   # tab-indentation
+]
+task-tags = ["TODO"]
+preview = true
+fixable = ["ALL"]
+unfixable = [
+    "D", # Dont fix docstyle from others
+]
+
+
+[language-server.ruff.config.settings.format]
+preview = true
+quote-style = "double"
+docstring-code-format = true
+indent-style = "space"
+skip-magic-trailing-comma = true
+
+
+#########################################
+# LANGUAGE: Markdown
+#########################################
+
+[[language]]
+auto-format = true
+# language-servers = ["marksman", "mpls", "scls", "markdown-oxi"]
+language-servers = ["scls", "marksman","markdown-oxide"  ]#, "mpls"]#,]
+name = "markdown"
+formatter = { command = "prettier", args = ["--parser", "markdown"] }
+
+
+[language-server.mpls]
+command = "mpls"
+args = ["--dark-mode","--enable-emoji", "--enable-wikilinks", "--full-sync", "--browser", "Firefox", "--port", "8080"]
+
+#########################################
+# LANGUAGE: LaTeX
+######################################### 
+[[language]]
+name = "latex"
+language-servers = ["texlab", "ltex-ls-plus", "scls"] # ltex provides some autocompletion/grammar suggestions
+
+[language-server.ltex]
+command = "ltex-ls-plus"
+
+[language-server.ltex.config.ltex.dictionary]
+"en-US" = ["ewwe","flaberrasted"]
+
+[language-server.texlab]
+command = "texlab"
+
+[language-server.texlab.config.chktex]
+onOpenAndSave = true
+onEdit = true
+
+# Okay, so the following is REALLY useful, but you probably only want to activate it on a desktop bc it's expensive battery-wise
+# [language-server.texlab.config.texlab.build]
+# auxDirectory = "output"
+# onSave = true
+# forwardSearchAfter = true
+# executable = "latexmk"
+# args = [
+#   # "-pdf"
+#   "-pvc",
+#   "-outdir=build",
+#   "-auxdir=build",
+#   "-interaction=nonstopmode",
+#   # Sync
+#   "-synctex=1",
+
+#   # "-shell-escape",
+#   # Specify the compiler
+#   "-lualatex",
+# ]
+
+# [language-server.texlab.config.texlab.forwardSearch]
+# executable = "zathura"
+# args = [ "--synctex-forward", "%l:%f", "./build/%p" ]
