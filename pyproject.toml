@@ -1,12 +1,15 @@
 [project]
-name = "langchain-postgres"
+name = "lc_pg"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "langchain>=1.0.3",
+    "numpy>=2.3.4",
     "pyrefly>=0.39.4",
     "ruff>=0.14.3",
+    "sqlalchemy>=2.0.44",
 ]
 [tool.pyrefly]
 search-path = ["examples/**", "langchain_postgres/**", "tests/**"]
@@ -16,4 +19,12 @@ project-excludes = [
     "**/__pycache__",
     "**/*venv/**/*",
 ]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["langchain_postgres*"]
 
